@@ -37,6 +37,7 @@ These scripts handle all of that correctly.
 | `add-skill.js` | Add one skill to an entry (run once per skill) | `SKILL_NAME` |
 | `save.js` | Save the dialog with three fallback strategies | none |
 | `delete-entry.js` | Delete an entry via the edit form | `USERNAME`, `ENTRY_ID` |
+| `post-company-update.js` | Post a text update to a company page (4 steps) | `COMPANY_ID`, `POST_TEXT` |
 
 ---
 
