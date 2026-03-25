@@ -6,6 +6,8 @@ A set of browser automation scripts for editing LinkedIn profiles via [Claude Co
 ![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=flat&logo=playwright&logoColor=white)
 ![Claude Code](https://img.shields.io/badge/Claude_Code-D4A27F?style=flat)
 
+**[https://cocodedk.github.io/linkedin-profile-editor/](https://cocodedk.github.io/linkedin-profile-editor/)**
+
 ---
 
 ## The problem
