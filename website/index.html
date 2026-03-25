@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LinkedIn Profile Editor — Playwright MCP Scripts for Claude Code</title>
+  <meta name="description" content="Browser automation scripts for editing LinkedIn profiles via Claude Code and Playwright MCP. Handles React synthetic events, typeahead inputs, and multi-step form flows that standard Playwright breaks." />
+  <meta property="og:title" content="LinkedIn Profile Editor" />
+  <meta property="og:description" content="Playwright MCP scripts that actually work on LinkedIn's React SPA. Add experience, skills, edit entries — from Claude Code." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cocodedk.github.io/linkedin-profile-editor/" />
+  <meta name="theme-color" content="#0d0d0d" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="scanlines"></div>
+  <div class="noise"></div>
+
+  <header class="site-header">
+    <div class="shell">
+      <div class="brand">
+        <span class="prompt">~/</span><span class="brand-name">linkedin-profile-editor</span><span class="cursor-blink">▌</span>
+      </div>
+      <nav>
+        <a href="#problem">problem</a>
+        <a href="#scripts">scripts</a>
+        <a href="#workflows">workflows</a>
+        <a href="#install">install</a>
+        <a href="https://github.com/cocodedk/linkedin-profile-editor" target="_blank" rel="noreferrer" class="nav-gh">github ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero shell">
+      <div class="hero-tag">Claude Code · Playwright MCP · MIT</div>
+      <h1>Edit LinkedIn profiles<br><span class="accent">without breaking things.</span></h1>
+      <p class="hero-sub">
+        LinkedIn is a React SPA. <code>browser_navigate</code> redirects. <code>input.value =</code> is silently ignored.
+        Typeaheads need timed multi-step calls. These scripts handle all of it — so you don't have to debug the DOM every time.
+      </p>
+      <div class="cta-row">
+        <a class="btn-primary" href="https://github.com/cocodedk/linkedin-profile-editor" target="_blank" rel="noreferrer">
+          <span class="btn-icon">⬡</span> View on GitHub
+        </a>
+        <a class="btn-ghost" href="#install">Install as skill →</a>
+      </div>
+
+      <div class="terminal-window">
+        <div class="term-bar">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="term-title">claude — ~/0-projects</span>
+        </div>
+        <div class="term-body">
+          <p><span class="term-prompt">$</span> <span class="term-cmd">claude "add Python to my cocode.dk LinkedIn entry"</span></p>
+          <p class="term-out">Loading linkedin-profile-editor skill...</p>
+          <p class="term-out">Navigating to experience edit form...</p>
+          <p class="term-out">Running add-skill.js → <span class="term-ok">added: "Python"</span></p>
+          <p class="term-out">Running save.js → <span class="term-ok">saved (XPath)</span></p>
+          <p class="term-out dim">✓ Done. Profile updated.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="problem" class="shell section">
+      <h2><span class="section-num">01</span> Why standard Playwright fails</h2>
+      <div class="problem-grid">
+        <article class="problem-card">
+          <div class="card-icon">⌁</div>
+          <h3>Navigation redirects</h3>
+          <p><code>browser_navigate</code> to LinkedIn edit URLs returns a redirect or 404. All navigation must go through <code>window.location.href</code> assignment inside <code>browser_evaluate</code>.</p>
+        </article>
+        <article class="problem-card">
+          <div class="card-icon">⊘</div>
+          <h3>React ignores <code>.value =</code></h3>
+          <p>React maintains internal fiber state. Setting <code>input.value</code> directly has no effect. You need <code>nativeInputValueSetter</code> from the prototype chain plus dispatched synthetic events.</p>
+        </article>
+        <article class="problem-card">
+          <div class="card-icon">⏱</div>
+          <h3>Typeahead timing</h3>
+          <p>The company field fetches suggestions async. Type → wait → check → click. One synchronous call returns nothing. Scripts split this into 3 separate timed steps.</p>
+        </article>
+        <article class="problem-card">
+          <div class="card-icon">≡</div>
+          <h3>Identical-looking inputs</h3>
+          <p>The skill input and title input are visually identical in the DOM. Targeting the wrong one does nothing — or silently overwrites the wrong field. Scripts use precise placeholder selectors.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="scripts" class="shell section">
+      <h2><span class="section-num">02</span> Scripts</h2>
+      <div class="script-table-wrap">
+        <table class="script-table">
+          <thead>
+            <tr>
+              <th>Script</th>
+              <th>Purpose</th>
+              <th>Params</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>inspect-dialog.js</code></td>
+              <td>Dump all fields, IDs, values, and buttons in the open dialog</td>
+              <td><span class="tag none">none</span></td>
+            </tr>
+            <tr>
+              <td><code>navigate-to-edit.js</code></td>
+              <td>Open the edit dialog for an existing experience entry</td>
+              <td><code>USERNAME</code> <code>ENTRY_ID</code></td>
+            </tr>
+            <tr>
+              <td><code>open-add-position.js</code></td>
+              <td>Navigate to experience page and open Add Position dialog</td>
+              <td><code>USERNAME</code></td>
+            </tr>
+            <tr>
+              <td><code>fill-position-form.js</code></td>
+              <td>Fill title, employment type, checkbox, and description</td>
+              <td><code>TITLE</code> <code>TYPE</code> <code>working</code> <code>DESC</code></td>
+            </tr>
+            <tr>
+              <td><code>fill-company-typeahead.js</code></td>
+              <td>Type company name and select from suggestions — 3 steps</td>
+              <td><code>COMPANY_NAME</code></td>
+            </tr>
+            <tr>
+              <td><code>fill-dates.js</code></td>
+              <td>Set start and end date selects</td>
+              <td><code>START_M</code> <code>START_Y</code> <code>END_M</code> <code>END_Y</code></td>
+            </tr>
+            <tr>
+              <td><code>add-skill.js</code></td>
+              <td>Add one skill to an entry — run once per skill</td>
+              <td><code>SKILL_NAME</code></td>
+            </tr>
+            <tr>
+              <td><code>save.js</code></td>
+              <td>Save the dialog — tries XPath, text match, aria-label</td>
+              <td><span class="tag none">none</span></td>
+            </tr>
+            <tr>
+              <td><code>delete-entry.js</code></td>
+              <td>Delete an entry via the edit form — 3 steps</td>
+              <td><code>USERNAME</code> <code>ENTRY_ID</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="emp-types">
+        <h3>Employment type values</h3>
+        <p class="dim-text">LinkedIn stores these as numeric IDs. Pass the number as a string to <code>fill-position-form.js</code>.</p>
+        <div class="type-grid">
+          <div class="type-badge"><code>2</code> Contract</div>
+          <div class="type-badge"><code>12</code> Full-time</div>
+          <div class="type-badge"><code>11</code> Part-time</div>
+          <div class="type-badge"><code>3</code> Self-employed</div>
+          <div class="type-badge"><code>20</code> Freelance</div>
+          <div class="type-badge"><code>18</code> Internship</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="workflows" class="shell section">
+      <h2><span class="section-num">03</span> Workflows</h2>
+      <div class="workflow-grid">
+        <div class="workflow-card">
+          <h3>Add new experience entry</h3>
+          <ol class="flow-list">
+            <li><code>open-add-position.js</code> <span class="step-note">step 1 — navigate</span></li>
+            <li><code>open-add-position.js</code> <span class="step-note">step 2 — click + → Add position</span></li>
+            <li><code>inspect-dialog.js</code> <span class="step-note">verify dialog opened</span></li>
+            <li><code>fill-position-form.js</code> <span class="step-note">title, type, description</span></li>
+            <li><code>fill-company-typeahead.js</code> <span class="step-note">3 steps with wait</span></li>
+            <li><code>fill-dates.js</code> <span class="step-note">start and end dates</span></li>
+            <li><code>save.js</code></li>
+            <li><code>add-skill.js</code> <span class="step-note">× N — once per skill</span></li>
+          </ol>
+        </div>
+        <div>
+          <div class="workflow-card" style="margin-bottom: 16px;">
+            <h3>Edit existing entry</h3>
+            <ol class="flow-list">
+              <li><code>navigate-to-edit.js</code> <span class="step-note">USERNAME + ENTRY_ID</span></li>
+              <li><code>inspect-dialog.js</code> <span class="step-note">verify fields</span></li>
+              <li><span class="step-note">run whichever fill scripts you need</span></li>
+              <li><code>save.js</code></li>
+            </ol>
+          </div>
+          <div class="workflow-card">
+            <h3>Delete an entry</h3>
+            <ol class="flow-list">
+              <li><code>delete-entry.js</code> <span class="step-note">step 1 — navigate to edit form</span></li>
+              <li><code>delete-entry.js</code> <span class="step-note">step 2 — click Delete</span></li>
+              <li><code>delete-entry.js</code> <span class="step-note">step 3 — confirm</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="find-ids">
+        <h3>Finding entry IDs</h3>
+        <p class="dim-text">Run this on the experience page to list all entry IDs:</p>
+        <pre class="code-block">(() =&gt; {
+  return Array.from(document.querySelectorAll('a[href*="/edit/forms/"]'))
+    .map(l =&gt; l.href).join('\n');
+})()</pre>
+        <p class="dim-text">Or take a screenshot — pencil buttons link to URLs that contain the ID.</p>
+      </div>
+    </section>
+
+    <section id="install" class="shell section">
+      <h2><span class="section-num">04</span> Install as a Claude Code skill</h2>
+      <p class="dim-text">Copy the scripts and skill file into your Claude skills directory. Claude Code loads it automatically when you ask to edit LinkedIn.</p>
+      <pre class="code-block">git clone https://github.com/cocodedk/linkedin-profile-editor.git /tmp/lpe
+mkdir -p ~/.claude/skills/linkedin-profile-editor
+cp -r /tmp/lpe/scripts ~/.claude/skills/linkedin-profile-editor/
+cp /tmp/lpe/SKILL.md ~/.claude/skills/linkedin-profile-editor/</pre>
+      <p class="dim-text" style="margin-top: 16px;">Then just ask Claude: <em>"add Python to my LinkedIn cocode.dk entry"</em> — no boilerplate, no DOM debugging.</p>
+
+      <div class="rules-grid">
+        <div class="rule">
+          <span class="rule-num">R1</span>
+          <div>
+            <strong>Never use <code>browser_navigate</code></strong>
+            <p>Use <code>browser_evaluate</code> with <code>window.location.href = url</code>. Direct navigation causes redirects.</p>
+          </div>
+        </div>
+        <div class="rule">
+          <span class="rule-num">R2</span>
+          <div>
+            <strong>Always use the scripts</strong>
+            <p>Never write equivalent logic inline. Scripts handle React events and edge cases. Inline code will miss them.</p>
+          </div>
+        </div>
+        <div class="rule">
+          <span class="rule-num">R3</span>
+          <div>
+            <strong>Arrow function wrapper</strong>
+            <p>Use <code>() =&gt; &#123; const x = 'VALUE'; ... &#125;</code>. Not IIFE — <code>browser_evaluate</code> requires a plain arrow wrapper.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell section about-section">
+      <div class="about-inner">
+        <p>Built by <a href="https://cocode.dk" target="_blank" rel="noreferrer">Babak Bandpey</a> while automating a job search workflow with Claude Code. LinkedIn breaks enough standard Playwright patterns that the fixes are worth sharing.</p>
+        <div class="about-links">
+          <a href="https://github.com/cocodedk/linkedin-profile-editor" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="https://github.com/cocodedk" target="_blank" rel="noreferrer">@cocodedk</a>
+          <a href="https://cocode.dk" target="_blank" rel="noreferrer">cocode.dk</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="shell site-footer">
+    <span>MIT License</span>
+    <span class="footer-sep">·</span>
+    <a href="https://github.com/cocodedk/linkedin-profile-editor">cocodedk/linkedin-profile-editor</a>
+  </footer>
+
+  <script>
+    // Staggered reveal on scroll
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.06 });
+    document.querySelectorAll('.problem-card, .workflow-card, .rule, .find-ids, .emp-types, .script-table-wrap, .terminal-window').forEach((el, i) => {
+      el.style.transitionDelay = `${(i % 4) * 60}ms`;
+      el.classList.add('reveal');
+      observer.observe(el);
+    });
+
+    // Blinking cursor
+    const cursor = document.querySelector('.cursor-blink');
+    setInterval(() => cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0', 530);
+  </script>
+</body>
+</html>
