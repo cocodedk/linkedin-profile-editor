@@ -38,7 +38,7 @@
 
   <main>
     <section class="hero shell">
-      <div class="hero-tag">Claude Code · Playwright MCP · MIT</div>
+      <div class="hero-tag">Agent Skill · Playwright MCP · MIT</div>
       <h1>Edit LinkedIn profiles<br><span class="accent">without breaking things.</span></h1>
       <p class="hero-sub">
         LinkedIn is a React SPA. <code>browser_navigate</code> redirects. <code>input.value =</code> is silently ignored.
@@ -217,13 +217,13 @@
     </section>
 
     <section id="install" class="shell section">
-      <h2><span class="section-num">04</span> Install as a Claude Code skill</h2>
-      <p class="dim-text">Copy the scripts and skill file into your Claude skills directory. Claude Code loads it automatically when you ask to edit LinkedIn.</p>
-      <pre class="code-block">git clone https://github.com/cocodedk/linkedin-profile-editor.git /tmp/lpe
-mkdir -p ~/.claude/skills/linkedin-profile-editor
-cp -r /tmp/lpe/scripts ~/.claude/skills/linkedin-profile-editor/
-cp /tmp/lpe/SKILL.md ~/.claude/skills/linkedin-profile-editor/</pre>
-      <p class="dim-text" style="margin-top: 16px;">Then just ask Claude: <em>"add Python to my LinkedIn cocode.dk entry"</em> — no boilerplate, no DOM debugging.</p>
+      <h2><span class="section-num">04</span> Install as an agent skill</h2>
+      <p class="dim-text">Works with Claude Code, Codex, Cursor, OpenCode, GitHub Copilot, Roo, and more. Installs to all detected agents automatically:</p>
+      <pre class="code-block">npx add-skill cocodedk/linkedin-profile-editor</pre>
+      <p class="dim-text" style="margin-top: 8px;">Or target a specific agent:</p>
+      <pre class="code-block">npx add-skill cocodedk/linkedin-profile-editor --agent claude
+npx add-skill cocodedk/linkedin-profile-editor --agent codex</pre>
+      <p class="dim-text" style="margin-top: 16px;">Then just ask your agent: <em>"add Python to my LinkedIn cocode.dk entry"</em> — no boilerplate, no DOM debugging.</p>
 
       <div class="rules-grid">
         <div class="rule">
