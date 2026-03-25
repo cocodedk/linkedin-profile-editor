@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;family=Outfit:wght@300;600;800&amp;display=swap');
+    </style>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#111416"/>
+    </linearGradient>
+    <linearGradient id="accent-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#22d3ee"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid lines -->
+  <g stroke="#1a1a1a" stroke-width="1" opacity="0.6">
+    <line x1="0" y1="105" x2="1200" y2="105"/>
+    <line x1="0" y1="210" x2="1200" y2="210"/>
+    <line x1="0" y1="315" x2="1200" y2="315"/>
+    <line x1="0" y1="420" x2="1200" y2="420"/>
+    <line x1="0" y1="525" x2="1200" y2="525"/>
+    <line x1="200" y1="0" x2="200" y2="630"/>
+    <line x1="400" y1="0" x2="400" y2="630"/>
+    <line x1="600" y1="0" x2="600" y2="630"/>
+    <line x1="800" y1="0" x2="800" y2="630"/>
+    <line x1="1000" y1="0" x2="1000" y2="630"/>
+  </g>
+
+  <!-- Left accent bar -->
+  <rect x="72" y="160" width="4" height="180" rx="2" fill="url(#accent-grad)"/>
+
+  <!-- Tag line -->
+  <text x="96" y="192" font-family="'JetBrains Mono', monospace" font-size="15" fill="#4ade80" letter-spacing="3" font-weight="400">AGENT SKILL · PLAYWRIGHT MCP · MIT</text>
+
+  <!-- Main heading -->
+  <text x="96" y="268" font-family="'Outfit', sans-serif" font-size="62" fill="#f0f0f0" font-weight="800" letter-spacing="-1">LinkedIn Profile Editor</text>
+
+  <!-- Sub heading -->
+  <text x="96" y="316" font-family="'Outfit', sans-serif" font-size="26" fill="#888" font-weight="300">Edit LinkedIn profiles without breaking things.</text>
+
+  <!-- Terminal block -->
+  <rect x="96" y="360" width="620" height="120" rx="8" fill="#0f0f0f" stroke="#2a2a2a" stroke-width="1"/>
+  <!-- Terminal dots -->
+  <circle cx="120" cy="385" r="6" fill="#ff5f57"/>
+  <circle cx="140" cy="385" r="6" fill="#febc2e"/>
+  <circle cx="160" cy="385" r="6" fill="#28c840"/>
+  <!-- Terminal content -->
+  <text x="120" y="425" font-family="'JetBrains Mono', monospace" font-size="17" fill="#666">$</text>
+  <text x="140" y="425" font-family="'JetBrains Mono', monospace" font-size="17" fill="#e0e0e0">npx add-skill <tspan fill="#4ade80">cocodedk/linkedin-profile-editor</tspan></text>
+  <text x="120" y="455" font-family="'JetBrains Mono', monospace" font-size="14" fill="#4ade80">✓ Installed for Claude Code, Codex, Cursor…</text>
+
+  <!-- Agents badge row -->
+  <g font-family="'JetBrains Mono', monospace" font-size="13" font-weight="400">
+    <rect x="96" y="500" width="130" height="28" rx="4" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
+    <text x="161" y="519" fill="#aaa" text-anchor="middle">Claude Code</text>
+
+    <rect x="238" y="500" width="80" height="28" rx="4" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
+    <text x="278" y="519" fill="#aaa" text-anchor="middle">Codex</text>
+
+    <rect x="330" y="500" width="80" height="28" rx="4" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
+    <text x="370" y="519" fill="#aaa" text-anchor="middle">Cursor</text>
+
+    <rect x="422" y="500" width="100" height="28" rx="4" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
+    <text x="472" y="519" fill="#aaa" text-anchor="middle">OpenCode</text>
+
+    <rect x="534" y="500" width="80" height="28" rx="4" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="1"/>
+    <text x="574" y="519" fill="#aaa" text-anchor="middle">+ more</text>
+  </g>
+
+  <!-- Right side: LinkedIn icon area -->
+  <rect x="880" y="180" width="220" height="220" rx="24" fill="#0A66C2" opacity="0.15"/>
+  <rect x="880" y="180" width="220" height="220" rx="24" fill="none" stroke="#0A66C2" stroke-width="1.5" opacity="0.4"/>
+  <!-- LinkedIn-style logo inside -->
+  <rect x="920" y="218" width="44" height="44" rx="5" fill="#0A66C2" opacity="0.8"/>
+  <rect x="920" y="272" width="44" height="76" rx="5" fill="#0A66C2" opacity="0.8"/>
+  <rect x="976" y="272" width="84" height="76" rx="5" fill="#0A66C2" opacity="0.8"/>
+  <path d="M976 218h84v38a42 42 0 0 1-42 42h-42v-80z" fill="#0A66C2" opacity="0.8"/>
+
+  <!-- URL -->
+  <text x="96" y="600" font-family="'JetBrains Mono', monospace" font-size="14" fill="#333">cocodedk.github.io/linkedin-profile-editor</text>
+</svg>
