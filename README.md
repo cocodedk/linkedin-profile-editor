@@ -134,34 +134,30 @@ LinkedIn uses numeric values internally. Pass the number as a string:
 
 ## Installation
 
-The skill consists of `SKILL.md` (the agent instructions) and the `scripts/` folder. Copy both to your agent's skills directory.
+### Recommended: npx add-skill
 
-**Claude Code:**
+Works with Claude Code, Codex, Cursor, OpenCode, GitHub Copilot, Roo, and more — installs to all detected agents automatically:
 
-```
-~/.claude/skills/linkedin-profile-editor/
-├── SKILL.md
-└── scripts/
+```sh
+npx add-skill cocodedk/linkedin-profile-editor
 ```
 
-**Codex / other agents:** Place the files wherever your agent loads skills from. The skill will activate when you ask to edit LinkedIn.
+Target a specific agent:
 
-The skill structure:
+```sh
+npx add-skill cocodedk/linkedin-profile-editor --agent claude
+npx add-skill cocodedk/linkedin-profile-editor --agent codex
+```
 
-```
-linkedin-profile-editor/
-├── SKILL.md
-└── scripts/
-    ├── add-skill.js
-    ├── delete-entry.js
-    ├── fill-company-typeahead.js
-    ├── fill-dates.js
-    ├── fill-position-form.js
-    ├── inspect-dialog.js
-    ├── navigate-to-edit.js
-    ├── open-add-position.js
-    └── save.js
-```
+### Manual
+
+Copy `SKILL.md` and `scripts/` to your agent's skills directory:
+
+| Agent | Path |
+|---|---|
+| Claude Code | `~/.claude/skills/linkedin-profile-editor/` |
+| Codex | `~/.codex/skills/linkedin-profile-editor/` |
+| Others | Check your agent's documentation |
 
 ---
 
