@@ -1,6 +1,6 @@
 # LinkedIn Profile Editor
 
-A set of browser automation scripts for editing LinkedIn profiles via [Claude Code](https://claude.ai/code) with the [Playwright MCP](https://github.com/microsoft/playwright-mcp) server.
+An agent skill for editing LinkedIn profiles via browser automation. Install it in [Claude Code](https://claude.ai/code), Codex, or any other agent that supports skills and the [Playwright MCP](https://github.com/microsoft/playwright-mcp) server.
 
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
 ![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=flat&logo=playwright&logoColor=white)
@@ -132,12 +132,24 @@ LinkedIn uses numeric values internally. Pass the number as a string:
 
 ---
 
-## Using as a Claude Code skill
+## Installation
 
-Copy the `scripts/` folder and `SKILL.md` to `~/.claude/skills/linkedin-profile-editor/`. Claude Code will load it when you ask to edit LinkedIn.
+The skill consists of `SKILL.md` (the agent instructions) and the `scripts/` folder. Copy both to your agent's skills directory.
+
+**Claude Code:**
 
 ```
 ~/.claude/skills/linkedin-profile-editor/
+├── SKILL.md
+└── scripts/
+```
+
+**Codex / other agents:** Place the files wherever your agent loads skills from. The skill will activate when you ask to edit LinkedIn.
+
+The skill structure:
+
+```
+linkedin-profile-editor/
 ├── SKILL.md
 └── scripts/
     ├── add-skill.js
