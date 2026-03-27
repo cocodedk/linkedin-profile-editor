@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LinkedIn Profile Editor — Playwright MCP Scripts for Claude Code</title>
-  <meta name="description" content="Browser automation scripts for editing LinkedIn profiles via Claude Code and Playwright MCP. Handles React synthetic events, typeahead inputs, and multi-step form flows that standard Playwright breaks." />
+  <title>LinkedIn Profile Editor — browser-use MCP + Playwright MCP for Claude Code</title>
+  <meta name="description" content="Agent skill for editing LinkedIn profiles via browser-use MCP and Playwright MCP. Handles React synthetic events, typeahead inputs, and multi-step form flows." />
   <meta property="og:title" content="LinkedIn Profile Editor" />
-  <meta property="og:description" content="Playwright MCP scripts that actually work on LinkedIn's React SPA. Add experience, skills, edit entries — from Claude Code." />
+  <meta property="og:description" content="browser-use MCP + Playwright MCP skill for LinkedIn's React SPA. Add experience, skills, edit entries — from Claude Code." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://cocodedk.github.io/linkedin-profile-editor/" />
   <meta property="og:image" content="https://cocodedk.github.io/linkedin-profile-editor/assets/og-image.png" />
@@ -43,11 +43,12 @@
 
   <main>
     <section class="hero shell">
-      <div class="hero-tag">Agent Skill · Playwright MCP · MIT</div>
+      <div class="hero-tag">Agent Skill · browser-use MCP · Playwright MCP · MIT</div>
       <h1>Edit LinkedIn profiles<br><span class="accent">without breaking things.</span></h1>
       <p class="hero-sub">
-        LinkedIn is a React SPA. <code>browser_navigate</code> redirects. <code>input.value =</code> is silently ignored.
-        Typeaheads need timed multi-step calls. These scripts handle all of it — so you don't have to debug the DOM every time.
+        LinkedIn is a React SPA. <code>input.value =</code> is silently ignored.
+        Typeaheads need timed multi-step calls. This skill uses <strong>browser-use MCP</strong> for navigation and clicks,
+        and <strong>Playwright MCP</strong> for React form filling — so you don't have to debug the DOM every time.
       </p>
       <div class="cta-row">
         <a class="btn-primary" href="https://github.com/cocodedk/linkedin-profile-editor" target="_blank" rel="noreferrer">
@@ -64,9 +65,10 @@
         <div class="term-body">
           <p><span class="term-prompt">$</span> <span class="term-cmd">claude "add Python to my cocode.dk LinkedIn entry"</span></p>
           <p class="term-out">Loading linkedin-profile-editor skill...</p>
-          <p class="term-out">Navigating to experience edit form...</p>
+          <p class="term-out">browser_navigate → experience edit form</p>
+          <p class="term-out">browser_get_state → found Save button [idx 42]</p>
           <p class="term-out">Running add-skill.js → <span class="term-ok">added: "Python"</span></p>
-          <p class="term-out">Running save.js → <span class="term-ok">saved (XPath)</span></p>
+          <p class="term-out">browser_click [42] → <span class="term-ok">saved</span></p>
           <p class="term-out dim">✓ Done. Profile updated.</p>
         </div>
       </div>
@@ -78,7 +80,7 @@
         <article class="problem-card">
           <div class="card-icon">⌁</div>
           <h3>Navigation redirects</h3>
-          <p><code>browser_navigate</code> to LinkedIn edit URLs returns a redirect or 404. All navigation must go through <code>window.location.href</code> assignment inside <code>browser_evaluate</code>.</p>
+          <p>Playwright's <code>browser_navigate</code> causes redirects on LinkedIn edit URLs. browser-use MCP's <code>browser_navigate</code> handles this correctly — it's the primary navigation driver in this skill.</p>
         </article>
         <article class="problem-card">
           <div class="card-icon">⊘</div>
@@ -184,13 +186,14 @@
         <div class="workflow-card">
           <h3>Add new experience entry</h3>
           <ol class="flow-list">
-            <li><code>open-add-position.js</code> <span class="step-note">step 1 — navigate</span></li>
-            <li><code>open-add-position.js</code> <span class="step-note">step 2 — click + → Add position</span></li>
+            <li><code>browser_navigate</code> <span class="step-note">→ /details/experience/</span></li>
+            <li><code>browser_get_state</code> + <code>browser_click</code> <span class="step-note">click + button</span></li>
+            <li><code>browser_get_state</code> + <code>browser_click</code> <span class="step-note">click "Add position"</span></li>
             <li><code>inspect-dialog.js</code> <span class="step-note">verify dialog opened</span></li>
             <li><code>fill-position-form.js</code> <span class="step-note">title, type, description</span></li>
             <li><code>fill-company-typeahead.js</code> <span class="step-note">3 steps with wait</span></li>
             <li><code>fill-dates.js</code> <span class="step-note">start and end dates</span></li>
-            <li><code>save.js</code></li>
+            <li><code>browser_get_state</code> + <code>browser_click</code> <span class="step-note">click Save</span></li>
             <li><code>add-skill.js</code> <span class="step-note">× N — once per skill</span></li>
           </ol>
         </div>
@@ -198,16 +201,16 @@
           <div class="workflow-card" style="margin-bottom: 16px;">
             <h3>Edit existing entry</h3>
             <ol class="flow-list">
-              <li><code>navigate-to-edit.js</code> <span class="step-note">USERNAME + ENTRY_ID</span></li>
+              <li><code>browser_navigate</code> <span class="step-note">→ /edit/forms/ENTRY_ID/</span></li>
               <li><code>inspect-dialog.js</code> <span class="step-note">verify fields</span></li>
               <li><span class="step-note">run whichever fill scripts you need</span></li>
-              <li><code>save.js</code></li>
+              <li><code>browser_get_state</code> + <code>browser_click</code> <span class="step-note">click Save</span></li>
             </ol>
           </div>
           <div class="workflow-card">
             <h3>Delete an entry</h3>
             <ol class="flow-list">
-              <li><code>delete-entry.js</code> <span class="step-note">step 1 — navigate to edit form</span></li>
+              <li><code>browser_navigate</code> <span class="step-note">→ /edit/forms/ENTRY_ID/</span></li>
               <li><code>delete-entry.js</code> <span class="step-note">step 2 — click Delete</span></li>
               <li><code>delete-entry.js</code> <span class="step-note">step 3 — confirm</span></li>
             </ol>
@@ -239,22 +242,22 @@ npx add-skill cocodedk/linkedin-profile-editor --agent codex</pre>
         <div class="rule">
           <span class="rule-num">R1</span>
           <div>
-            <strong>Never use <code>browser_navigate</code></strong>
-            <p>Use <code>browser_evaluate</code> with <code>window.location.href = url</code>. Direct navigation causes redirects.</p>
+            <strong>browser-use for navigation</strong>
+            <p>Use browser-use MCP's <code>browser_navigate</code> for all URLs. It handles LinkedIn redirects correctly. Playwright's <code>browser_navigate</code> does not.</p>
           </div>
         </div>
         <div class="rule">
           <span class="rule-num">R2</span>
           <div>
-            <strong>Always use the scripts</strong>
-            <p>Never write equivalent logic inline. Scripts handle React events and edge cases. Inline code will miss them.</p>
+            <strong>Get state before every click</strong>
+            <p>Run <code>browser_get_state</code> immediately before <code>browser_click</code>. Element indices shift after any DOM mutation — dialog open, typeahead appearing, etc.</p>
           </div>
         </div>
         <div class="rule">
           <span class="rule-num">R3</span>
           <div>
-            <strong>Arrow function wrapper</strong>
-            <p>Use <code>() =&gt; &#123; const x = 'VALUE'; ... &#125;</code>. Not IIFE — <code>browser_evaluate</code> requires a plain arrow wrapper.</p>
+            <strong>Always use the scripts for forms</strong>
+            <p>Never write React form logic inline. Scripts handle <code>nativeInputValueSetter</code> + synthetic events. Inline code will be silently ignored by React.</p>
           </div>
         </div>
       </div>
