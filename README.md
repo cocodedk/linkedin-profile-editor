@@ -1,6 +1,6 @@
 # LinkedIn Profile Editor
 
-An agent skill for editing LinkedIn profiles via browser automation. Uses **browser-use MCP** as the primary driver and **Playwright MCP** for React form filling. Install it in [Claude Code](https://claude.ai/code), Codex, or any other agent that supports skills.
+A **skill + Playwright script library** for editing LinkedIn profiles via browser automation. The skill orchestrates the flow; 10 JS scripts handle React's synthetic event requirements that standard browser automation cannot touch. Uses **browser-use MCP** as the primary driver and **Playwright MCP** for React form filling. Install in [Claude Code](https://claude.ai/code), Codex, or any agent that supports skills.
 
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
 ![browser-use](https://img.shields.io/badge/browser--use_MCP-0d0d0d?style=flat&logo=googlechrome&logoColor=white)
