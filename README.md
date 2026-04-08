@@ -1,9 +1,9 @@
 # LinkedIn Profile Editor
 
-A **skill + Playwright script library** for editing LinkedIn profiles via browser automation. The skill orchestrates the flow; 10 JS scripts handle React's synthetic event requirements that standard browser automation cannot touch. Uses **browser-use MCP** as the primary driver and **Playwright MCP** for React form filling. Install in [Claude Code](https://claude.ai/code), Codex, or any agent that supports skills.
+A **skill + Playwright script library** for editing LinkedIn profiles via browser automation. The skill orchestrates the flow; 10 JS scripts handle React's synthetic event requirements that standard browser automation cannot touch. Uses **Chrome DevTools MCP** as the primary driver and **Playwright MCP** for React form filling. Install in [Claude Code](https://claude.ai/code), Codex, or any agent that supports skills.
 
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
-![browser-use](https://img.shields.io/badge/browser--use_MCP-0d0d0d?style=flat&logo=googlechrome&logoColor=white)
+![Chrome DevTools](https://img.shields.io/badge/Chrome_DevTools_MCP-0d0d0d?style=flat&logo=googlechrome&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright_MCP-2EAD33?style=flat&logo=playwright&logoColor=white)
 ![Claude Code](https://img.shields.io/badge/Claude_Code-D4A27F?style=flat)
 
@@ -15,7 +15,7 @@ A **skill + Playwright script library** for editing LinkedIn profiles via browse
 
 | Layer | MCP Server | Responsibility |
 |---|---|---|
-| Navigation, clicks, state, screenshots | **browser-use MCP** | `browser_navigate`, `browser_get_state`, `browser_click`, `browser_extract_content`, `retry_with_browser_use_agent` |
+| Navigation, clicks, state, screenshots | **Chrome DevTools MCP** | `navigate_page`, `take_snapshot`, `click`, `evaluate_script`, `take_screenshot` |
 | React form filling | **Playwright MCP** | `browser_evaluate` only — runs the JS scripts below |
 
 ---
@@ -29,7 +29,7 @@ LinkedIn is a React SPA. Standard browser automation breaks:
 - The company field is a typeahead that needs timed multi-step interaction
 - The skill input looks identical to the title input but targets a completely different element
 
-browser-use MCP handles navigation and clicks. The JS scripts handle React's synthetic event requirements.
+Chrome DevTools MCP handles navigation and clicks via the full accessibility tree. The JS scripts handle React's synthetic event requirements.
 
 ---
 
@@ -45,8 +45,6 @@ browser-use MCP handles navigation and clicks. The JS scripts handle React's syn
 | `delete-entry.js` | Delete an entry via the edit form (steps 2+3) | `USERNAME`, `ENTRY_ID` |
 | `post-company-update.js` | Post a text update to a company page (4 steps) | `COMPANY_ID`, `POST_TEXT` |
 
-> `navigate-to-edit.js`, `open-add-position.js` step 1, and `save.js` are replaced by native browser-use MCP tools.
-
 ---
 
 ## How to use
@@ -54,43 +52,43 @@ browser-use MCP handles navigation and clicks. The JS scripts handle React's syn
 **Add a new experience entry:**
 
 ```
-1. browser_navigate        → linkedin.com/in/USERNAME/details/experience/
-2. browser_get_state       → find the + button
-3. browser_click           → click the + button
-4. browser_get_state       → find "Add position" menu item
-5. browser_click           → click "Add position"
-6. browser_evaluate        → inspect-dialog.js
-7. browser_evaluate        → fill-position-form.js
-8. browser_evaluate        → fill-company-typeahead.js (3 steps)
-9. browser_evaluate        → fill-dates.js
-10. browser_get_state      → find "Save" button index
-    browser_click          → click Save
-11. browser_evaluate       → add-skill.js × N
+1. navigate_page           → linkedin.com/in/USERNAME/details/experience/
+2. take_snapshot           → find the + button ("Add a position or career break")
+3. click                   → click the + button (by UID)
+4. take_snapshot           → find "Add position" menu item
+5. click                   → click "Add position"
+6. evaluate_script         → inspect-dialog.js (verify dialog, note field IDs)
+7. evaluate_script         → fill-position-form.js
+8. evaluate_script         → fill-company-typeahead.js (3 steps, wait 1-2s between step 1 and 2)
+9. evaluate_script         → fill-dates.js
+10. take_snapshot          → find "Save" button UID
+    click                  → click Save
+11. evaluate_script        → add-skill.js × N (once per skill)
 ```
 
 **Edit an existing entry:**
 
 ```
-1. browser_navigate        → linkedin.com/in/USERNAME/details/experience/edit/forms/ENTRY_ID/
-2. browser_evaluate        → inspect-dialog.js
-3. browser_evaluate        → fill-position-form.js / fill-dates.js / etc.
-4. browser_get_state       → find "Save" button index
-   browser_click           → click Save
+1. navigate_page           → linkedin.com/in/USERNAME/details/experience/edit/forms/ENTRY_ID/
+2. evaluate_script         → inspect-dialog.js (verify + check field IDs)
+3. evaluate_script         → fill-position-form.js / fill-dates.js / etc.
+4. take_snapshot           → find "Save" button UID
+   click                   → click Save
 ```
 
 **Delete an entry:**
 
 ```
-1. browser_navigate        → linkedin.com/in/USERNAME/details/experience/edit/forms/ENTRY_ID/
-2. browser_evaluate        → delete-entry.js step 2  (click Delete)
-3. browser_evaluate        → delete-entry.js step 3  (confirm)
+1. navigate_page           → linkedin.com/in/USERNAME/details/experience/edit/forms/ENTRY_ID/
+2. evaluate_script         → delete-entry.js step 2  (click Delete)
+3. evaluate_script         → delete-entry.js step 3  (confirm)
 ```
 
 ---
 
 ## Finding entry IDs
 
-Use `browser_extract_content` with query `"all experience entry edit URLs"` — or run this via `browser_evaluate`:
+Use `navigate_page` to the experience page, then `evaluate_script` with this function:
 
 ```javascript
 (() => {
@@ -99,7 +97,7 @@ Use `browser_extract_content` with query `"all experience entry edit URLs"` — 
 })()
 ```
 
-Or take a `browser_screenshot` — pencil buttons link to URLs that contain the entry ID.
+Or take a `take_screenshot` — pencil buttons link to URLs that contain the entry ID.
 
 ---
 
@@ -122,10 +120,11 @@ LinkedIn uses numeric values internally. Pass the number as a string:
 
 ## Core rules
 
-1. **Use browser-use `browser_navigate` for ALL navigation** — it handles LinkedIn redirects correctly
-2. **Always run `browser_get_state` before `browser_click`** — element indices shift after DOM mutations
+1. **Use Chrome DevTools `navigate_page` for ALL navigation** — it handles LinkedIn redirects correctly
+2. **Always run `take_snapshot` before `click`** — element UIDs shift after DOM mutations; never reuse UIDs from previous snapshots
 3. **Never set input values without dispatching React events** — React ignores plain `.value =` assignments
 4. **Scripts use arrow function pattern** `() => { const param = 'VALUE'; ... }` — substitute values before running. Do not use IIFE pattern.
+5. **Accessibility tree provides precise targeting** — `take_snapshot` returns full DOM structure with UIDs, making element location reliable
 
 ---
 
@@ -133,17 +132,17 @@ LinkedIn uses numeric values internally. Pass the number as a string:
 
 | Mistake | Fix |
 |---|---|
-| Using Playwright `browser_navigate` → redirect | Use **browser-use** `browser_navigate` instead |
 | Input value doesn't stick | Scripts use `nativeInputValueSetter` + React events — use the scripts, not inline `.value =` |
-| `browser_click` hits wrong element | Run `browser_get_state` immediately before clicking — indices shift after DOM changes |
+| `click` hits wrong element | Run `take_snapshot` immediately before clicking — UIDs shift after DOM changes |
 | Company typeahead shows nothing | Wait 1-2s after step 1 before checking suggestions |
-| Save button not found | Run `browser_get_state` for current indices; fall back to `save.js` via `browser_evaluate` |
+| Save button not found | Run `take_snapshot` for current UIDs; check button is visible in snapshot |
 | Delete URL 404 | There is no delete URL — go through edit form → Delete button |
 | "Add skill" closes after each pick | Expected — run `add-skill.js` once per skill |
 | Typed into wrong input | Always use `add-skill.js` — targets `input[placeholder*="Project Management"]` specifically |
-| `add-skill.js` says button not found | Scroll down with `browser_scroll` — skills section is below dates |
+| `add-skill.js` says button not found | Scroll down — skills section is below dates |
 | Skill shows "No results" under current skills | Normal — look under "Additional skills" in the same dropdown |
-| Stuck after multiple attempts | Use `retry_with_browser_use_agent` with a detailed task description |
+| Modal file upload won't respond | Target file inputs directly with `evaluate_script` — React modals block standard clicks |
+| Stuck after multiple attempts | Use detailed `evaluate_script` with DOM inspection as fallback |
 
 ---
 
@@ -151,7 +150,7 @@ LinkedIn uses numeric values internally. Pass the number as a string:
 
 ### Recommended: npx add-skill
 
-Works with Claude Code, Codex, Cursor, OpenCode, GitHub Copilot, Roo, and more — installs to all detected agents automatically:
+Works with Claude Code, Codex, Cursor, OpenCode, GitHub Copilot, Roo, and more:
 
 ```sh
 npx add-skill cocodedk/linkedin-profile-editor
@@ -179,9 +178,22 @@ Copy `SKILL.md` and `scripts/` to your agent's skills directory:
 ## Requirements
 
 - [Claude Code](https://claude.ai/code)
-- [browser-use MCP](https://github.com/browser-use/browser-use) — register with `claude mcp add --scope user browser-use /path/to/browser-use -- --mcp`
-- [Playwright MCP](https://github.com/microsoft/playwright-mcp) connected to Claude Code
-- A LinkedIn account
+- **Chrome DevTools MCP** — install once in Claude Code:
+  ```
+  /plugin chrome-devtools-mcp
+  ```
+- **Playwright MCP** — add to your project's `.mcp.json` (auto-prompted on first run):
+  ```json
+  {
+    "mcpServers": {
+      "playwright": {
+        "command": "npx",
+        "args": ["@playwright/mcp@latest"]
+      }
+    }
+  }
+  ```
+- A LinkedIn account with Chrome open and logged in
 
 ---
 
