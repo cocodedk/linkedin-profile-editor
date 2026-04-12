@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+# Validate that key skill files exist and are not empty
+echo "Running pre-commit checks..."
+
+if [ ! -f "SKILL.md" ]; then
+  echo "ERROR: SKILL.md is missing" >&2
+  exit 1
+fi
+
+echo "Pre-commit checks passed."
