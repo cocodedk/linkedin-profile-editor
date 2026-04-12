@@ -1,0 +1,27 @@
+# LinkedIn Profile Editor
+
+> A Claude Code skill for automating LinkedIn profile edits via browser-use MCP and Playwright MCP. Automates adding/editing experience entries, skills, open-to-work settings, and deleting entries on LinkedIn's React SPA.
+
+## Usage
+
+Install in Claude Code:
+```bash
+# Copy SKILL.md to ~/.claude/skills/linkedin-profile-editor/SKILL.md
+```
+
+Then invoke the skill in Claude Code when automating LinkedIn profile edits.
+
+## Author
+
+- **Name**: Babak Bandpey
+- **Website**: https://cocode.dk
+- **LinkedIn**: https://linkedin.com/in/babakbandpey
+- **GitHub**: https://github.com/cocodedk
+
+## Repository
+
+- **GitHub**: https://github.com/cocodedk/linkedin-profile-editor
+
+## License
+
+Apache-2.0 | © 2026 [Cocode](https://cocode.dk)
