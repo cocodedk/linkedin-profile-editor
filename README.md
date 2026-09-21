@@ -7,7 +7,7 @@ A **skill + Playwright script library** for editing LinkedIn profiles via browse
 ![Playwright](https://img.shields.io/badge/Playwright_MCP-2EAD33?style=flat&logo=playwright&logoColor=white)
 ![Claude Code](https://img.shields.io/badge/Claude_Code-D4A27F?style=flat)
 
-**[https://cocodedk.github.io/linkedin-profile-editor/](https://cocodedk.github.io/linkedin-profile-editor/)**
+**[https://linkedin-editor.cocode.dk/](https://linkedin-editor.cocode.dk/)**
 
 ---
 
