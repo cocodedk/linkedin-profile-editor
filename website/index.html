@@ -20,26 +20,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://brand.cocode.dk/v1.css" />
+  <script type="module" src="https://brand.cocode.dk/v1.js"></script>
 </head>
 <body>
 
+  <!-- The cocode.dk family frame. Without JavaScript its child shows instead: a way home. -->
+  <cocode-head project="LinkedIn Profile Editor" accent="#f5a623" on-accent="#0d0d0d" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+  </cocode-head>
+
   <div class="scanlines"></div>
   <div class="noise"></div>
-
-  <header class="site-header">
-    <div class="shell">
-      <div class="brand">
-        <span class="prompt">~/</span><span class="brand-name">linkedin-profile-editor</span><span class="cursor-blink">▌</span>
-      </div>
-      <nav>
-        <a href="#problem">problem</a>
-        <a href="#scripts">scripts</a>
-        <a href="#workflows">workflows</a>
-        <a href="#install">install</a>
-        <a href="https://github.com/cocodedk/linkedin-profile-editor" target="_blank" rel="noreferrer" class="nav-gh">github ↗</a>
-      </nav>
-    </div>
-  </header>
 
   <main>
     <section class="hero shell">
@@ -277,9 +269,11 @@ npx add-skill cocodedk/linkedin-profile-editor --agent codex</pre>
 
   <footer class="shell site-footer">
     <span>MIT License</span>
-    <span class="footer-sep">·</span>
-    <a href="https://github.com/cocodedk/linkedin-profile-editor">cocodedk/linkedin-profile-editor</a>
   </footer>
+
+  <cocode-foot repo="cocodedk/linkedin-profile-editor" dark>
+    <a href="https://cocode.dk">cocode.dk</a>
+  </cocode-foot>
 
   <script>
     // Staggered reveal on scroll
@@ -296,10 +290,6 @@ npx add-skill cocodedk/linkedin-profile-editor --agent codex</pre>
       el.classList.add('reveal');
       observer.observe(el);
     });
-
-    // Blinking cursor
-    const cursor = document.querySelector('.cursor-blink');
-    setInterval(() => cursor.style.opacity = cursor.style.opacity === '0' ? '1' : '0', 530);
   </script>
 </body>
 </html>
