@@ -325,6 +325,7 @@ code {
   display: flex;
   align-items: baseline;
   gap: 10px;
+  flex-wrap: wrap;
   font-family: var(--mono);
   font-size: 0.82rem;
 }
